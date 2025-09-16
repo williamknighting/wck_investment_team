@@ -1,0 +1,180 @@
+# Risk Management Configuration
+# Comprehensive risk limits and controls for the AI hedge fund
+
+# Portfolio-level risk limits
+portfolio_risk:
+  # Maximum portfolio exposure
+  max_gross_exposure: 1.0         # 100% of capital (1x leverage)
+  max_net_exposure: 0.8           # 80% net long
+  max_sector_exposure: 0.25       # 25% max per sector
+  max_single_position: 0.05       # 5% max per position
+  
+  # Risk metrics limits
+  max_portfolio_var: 0.02         # 2% daily VaR at 95% confidence
+  max_portfolio_drawdown: 0.15    # 15% maximum drawdown
+  max_portfolio_volatility: 0.20  # 20% annualized volatility
+  max_beta: 1.2                   # Maximum portfolio beta
+  
+  # Concentration limits
+  max_positions: 50               # Maximum number of positions
+  min_diversification_score: 0.7  # Minimum diversification score
+  max_correlation_threshold: 0.5  # Max avg correlation between positions
+
+# Position-level risk limits
+position_risk:
+  # Individual position limits
+  default_position_size: 0.02     # 2% of portfolio per position
+  max_position_size: 0.05         # 5% maximum position size
+  min_position_size: 0.001        # 0.1% minimum position size
+  
+  # Stop loss and profit targets
+  default_stop_loss: 0.08         # 8% stop loss
+  max_stop_loss: 0.15             # 15% maximum stop loss
+  min_stop_loss: 0.03             # 3% minimum stop loss
+  profit_target_ratio: 2.0        # 2:1 profit target to stop loss
+  
+  # Holding period limits
+  max_hold_days: 30               # Maximum holding period
+  min_hold_days: 1                # Minimum holding period
+  
+  # Volatility adjustments
+  volatility_adjustment: true
+  high_volatility_threshold: 0.30  # 30% volatility threshold
+  high_volatility_size_multiplier: 0.5  # Reduce size by 50% for high vol
+
+# Sector and industry limits
+sector_limits:
+  technology: 0.30                # 30% max in technology
+  healthcare: 0.20                # 20% max in healthcare
+  financials: 0.15                # 15% max in financials
+  consumer_discretionary: 0.15    # 15% max in consumer discretionary
+  industrials: 0.10               # 10% max in industrials
+  energy: 0.10                    # 10% max in energy
+  materials: 0.10                 # 10% max in materials
+  utilities: 0.05                 # 5% max in utilities
+  real_estate: 0.05               # 5% max in real estate
+  consumer_staples: 0.05          # 5% max in consumer staples
+  telecommunications: 0.05        # 5% max in telecommunications
+
+# Market cap and liquidity limits
+liquidity_risk:
+  # Market cap requirements
+  min_market_cap: 1000000000      # $1B minimum market cap
+  large_cap_min: 10000000000      # $10B for large cap
+  mid_cap_max: 10000000000        # $10B max for mid cap
+  mid_cap_min: 2000000000         # $2B min for mid cap
+  
+  # Volume requirements
+  min_avg_daily_volume: 1000000   # 1M shares average daily volume
+  min_dollar_volume: 10000000     # $10M average daily dollar volume
+  max_position_vs_volume: 0.10    # Max 10% of daily volume
+  
+  # Liquidity scoring
+  min_liquidity_score: 0.7        # Minimum liquidity score
+  liquidity_buffer_days: 5        # Days to liquidate position
+
+# Drawdown controls
+drawdown_controls:
+  # Portfolio drawdown limits
+  soft_drawdown_limit: 0.08       # 8% soft limit (reduce risk)
+  hard_drawdown_limit: 0.15       # 15% hard limit (stop trading)
+  
+  # Position drawdown limits  
+  position_soft_limit: 0.05       # 5% position soft limit
+  position_hard_limit: 0.10       # 10% position hard limit
+  
+  # Recovery requirements
+  recovery_threshold: 0.05        # Must recover 5% before resuming
+  recovery_time_limit: 30         # 30 days max recovery time
+
+# Trading frequency limits
+frequency_limits:
+  max_trades_per_day: 20          # Maximum trades per day
+  max_turnover_daily: 0.20        # 20% max daily turnover
+  max_turnover_monthly: 2.0       # 200% max monthly turnover
+  
+  # Cool-down periods
+  same_symbol_cooldown: 1         # 1 day between trades same symbol
+  sector_cooldown: 0              # No sector cooldown
+  
+  # Size limits based on frequency
+  high_frequency_size_limit: 0.01 # 1% max for frequent trades
+
+# Correlation and concentration limits
+correlation_limits:
+  max_pairwise_correlation: 0.7   # Max correlation between any two positions
+  max_portfolio_correlation: 0.8  # Max correlation with market
+  max_strategy_correlation: 0.6   # Max correlation between strategies
+  
+  # Concentration measures
+  max_herfindahl_index: 0.15      # Concentration index limit
+  min_effective_positions: 15     # Minimum effective number of positions
+
+# Leverage and margin limits
+leverage_limits:
+  max_gross_leverage: 1.0         # No leverage initially
+  max_net_leverage: 0.8           # 80% net leverage
+  margin_requirement: 0.25        # 25% margin requirement
+  
+  # Margin call levels
+  margin_call_level: 0.30         # 30% margin call
+  forced_liquidation_level: 0.25  # 25% forced liquidation
+
+# Stress testing limits
+stress_testing:
+  # Scenario analysis
+  market_crash_scenario: -0.20    # -20% market crash
+  sector_rotation_scenario: 0.15  # 15% sector rotation
+  volatility_spike_scenario: 2.0  # 2x volatility spike
+  
+  # Stress test frequency
+  daily_stress_test: true
+  weekly_comprehensive_test: true
+  monthly_extreme_scenario_test: true
+  
+  # Stress test limits
+  max_stress_loss: 0.10           # 10% max loss in stress test
+  required_stress_margin: 0.05    # 5% margin above stress loss
+
+# Real-time monitoring thresholds
+monitoring_thresholds:
+  # Alert levels
+  position_pnl_alert: 0.03        # 3% P&L alert per position
+  portfolio_pnl_alert: 0.05       # 5% P&L alert for portfolio
+  volume_spike_alert: 3.0         # 3x volume spike alert
+  
+  # Auto-execution triggers
+  auto_stop_loss_trigger: 0.08    # 8% automatic stop loss
+  auto_profit_take_trigger: 0.16  # 16% automatic profit taking (2:1 ratio)
+  emergency_liquidation_trigger: 0.12  # 12% emergency liquidation
+
+# Operational risk controls
+operational_risk:
+  # System limits
+  max_api_calls_per_minute: 1000  # API rate limiting
+  max_order_size: 100000          # $100K max single order
+  min_order_size: 1000            # $1K min single order
+  
+  # Validation requirements
+  require_dual_authorization: false  # For large trades
+  dual_auth_threshold: 50000      # $50K threshold
+  
+  # Backup and recovery
+  data_backup_frequency: "hourly"
+  system_health_check_frequency: "every_5_minutes"
+  
+# Regulatory compliance
+compliance:
+  # Reporting requirements
+  daily_risk_report: true
+  weekly_performance_report: true  
+  monthly_compliance_report: true
+  
+  # Position limits for compliance
+  max_ownership_percentage: 0.05  # 5% max ownership of any company
+  insider_trading_prevention: true
+  market_manipulation_prevention: true
+  
+  # Record keeping
+  trade_record_retention_days: 2555  # 7 years
+  communication_record_retention: true

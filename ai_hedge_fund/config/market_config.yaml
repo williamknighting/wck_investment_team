@@ -1,0 +1,87 @@
+# Market Configuration
+# Configuration for different markets and trading sessions
+
+us_equities:
+  market_hours:
+    pre_market_start: "04:00"
+    market_open: "09:30"
+    market_close: "16:00"
+    post_market_end: "20:00"
+    timezone: "America/New_York"
+  
+  trading_days:
+    exclude_weekends: true
+    exclude_holidays: true
+    holiday_calendar: "NYSE"
+  
+  instruments:
+    allowed_types: ["stocks", "etfs"]
+    min_market_cap: 1000000000  # $1B minimum market cap
+    min_avg_volume: 1000000     # 1M average daily volume
+    exclude_penny_stocks: true
+    penny_stock_threshold: 5.0  # Below $5 considered penny stock
+  
+  data_requirements:
+    min_price_history_days: 252  # 1 year of data
+    required_fundamentals: ["market_cap", "pe_ratio", "revenue", "earnings"]
+    real_time_data: true
+
+crypto:
+  market_hours:
+    market_open: "00:00"
+    market_close: "23:59"
+    timezone: "UTC"
+    continuous_trading: true
+  
+  trading_days:
+    exclude_weekends: false
+    exclude_holidays: false
+  
+  instruments:
+    allowed_types: ["spot", "futures"]
+    min_market_cap: 100000000   # $100M minimum market cap
+    min_avg_volume: 10000000    # $10M average daily volume
+    major_pairs_only: true
+  
+  data_requirements:
+    min_price_history_days: 90  # 3 months of data
+    real_time_data: true
+
+forex:
+  market_hours:
+    sydney_open: "17:00"
+    tokyo_open: "19:00" 
+    london_open: "03:00"
+    new_york_open: "08:00"
+    timezone: "UTC"
+  
+  trading_days:
+    exclude_weekends: true      # Limited weekend trading
+    exclude_holidays: false
+  
+  instruments:
+    allowed_types: ["major_pairs", "minor_pairs"]
+    major_pairs: ["EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD", "AUDUSD", "NZDUSD"]
+    minor_pairs: ["EURGBP", "EURJPY", "EURCHF", "GBPJPY"]
+  
+  data_requirements:
+    min_price_history_days: 180  # 6 months of data
+    real_time_data: true
+
+# Global market configuration
+global_settings:
+  default_market: "us_equities"
+  data_update_frequency: 60     # seconds
+  max_symbols_per_request: 100
+  rate_limit_per_minute: 1000
+  
+  risk_management:
+    market_hours_only: true     # Only trade during market hours
+    halt_on_circuit_breaker: true
+    max_gap_percentage: 0.10    # 10% gap limit
+    
+  data_quality:
+    min_data_quality_score: 0.95
+    validate_ohlcv: true
+    detect_outliers: true
+    handle_splits_dividends: true

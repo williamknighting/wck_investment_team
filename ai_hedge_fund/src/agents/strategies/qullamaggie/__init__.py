@@ -1,0 +1,3 @@
+"""
+Qullamaggie strategy agents
+"""
