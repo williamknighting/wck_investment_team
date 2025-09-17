@@ -1,0 +1,284 @@
+{
+  "strategy_name": "Qullamaggie Momentum Trading",
+  "version": "1.0",
+  "description": "Momentum swing trading strategy focusing on breakouts, episodic pivots, and parabolic shorts",
+  
+  "market_regime_rules": {
+    "bull_market": {
+      "conditions": [
+        "nasdaq_ma10 > nasdaq_ma20",
+        "both_mas_slope_angle >= 45",
+        "both_mas_trending_up"
+      ],
+      "actions": "trade_all_setups",
+      "position_size_multiplier": 1.0
+    },
+    "choppy_market": {
+      "conditions": [
+        "mas_sideways",
+        "high_failure_rate"
+      ],
+      "actions": "only_5_star_setups",
+      "position_size_multiplier": 0.5
+    },
+    "bear_market": {
+      "conditions": [
+        "nasdaq_ma10 < nasdaq_ma20",
+        "both_mas_slope_angle <= -45",
+        "both_mas_trending_down"
+      ],
+      "actions": "cash_only",
+      "position_size_multiplier": 0.0
+    }
+  },
+
+  "setups": {
+    "breakout": {
+      "enabled": true,
+      "min_confidence": 3.0,
+      "entry_conditions": {
+        "consolidation_days": [3, 20],
+        "prior_move_percent": [20, 50],
+        "ma_alignment": "price > ma10 > ma20",
+        "ma_angle_minimum": 45,
+        "higher_lows_required": true,
+        "tightening_range": true,
+        "min_adr_percent": 5.0,
+        "min_dollar_volume": 10000000,
+        "volume_surge_required": true,
+        "volume_surge_multiplier": 1.5
+      },
+      "entry_method": "opening_range_high_break",
+      "opening_range_timeframes": ["1m", "5m", "60m"],
+      "stop_loss_method": "day_low",
+      "max_stop_distance_atr": 1.0,
+      "preferred_stop_distance_atr": 0.5
+    },
+
+    "episodic_pivot": {
+      "enabled": true,
+      "min_confidence": 4.0,
+      "entry_conditions": {
+        "min_gap_percent": 10.0,
+        "catalyst_required": true,
+        "catalyst_types": ["earnings", "fda", "political", "contracts"],
+        "no_recent_rally_months": [3, 6],
+        "first_20min_volume_requirement": "full_daily_average",
+        "min_eps_growth": 50.0,
+        "preferred_eps_growth": 100.0
+      },
+      "entry_method": "opening_range_high_break",
+      "stop_loss_method": "day_low",
+      "catalyst_priority": {
+        "earnings": 5,
+        "fda": 4,
+        "political": 3,
+        "contracts": 2
+      }
+    },
+
+    "parabolic_short": {
+      "enabled": false,
+      "min_account_size": 1000000,
+      "min_confidence": 4.0,
+      "entry_conditions": {
+        "large_cap_extension": [50, 100],
+        "small_cap_extension": [300, 1000],
+        "consecutive_up_days": [3, 5],
+        "exhaustion_signals_required": true,
+        "min_extension_from_ma20": 25.0
+      },
+      "entry_methods": [
+        "opening_range_low_break",
+        "first_red_candle",
+        "vwap_rejection"
+      ],
+      "stop_loss_methods": ["day_high", "vwap_reclaim"],
+      "targets": ["ma10", "ma20"],
+      "warning": "Never short too early, wait for clear exhaustion"
+    }
+  },
+
+  "position_sizing": {
+    "account_tiers": {
+      "small": {
+        "max_account": 100000,
+        "max_positions": 4,
+        "max_position_percent": 25.0,
+        "risk_per_trade": [0.5, 1.5],
+        "margin_allowed": false
+      },
+      "medium": {
+        "min_account": 100000,
+        "max_account": 1000000,
+        "max_positions": 5,
+        "max_position_percent": 20.0,
+        "risk_per_trade": [0.25, 1.0],
+        "margin_allowed": false
+      },
+      "large": {
+        "min_account": 1000000,
+        "max_positions": 5,
+        "max_position_percent": [10, 20],
+        "risk_per_trade": [0.25, 1.0],
+        "margin_allowed": true,
+        "short_selling_allowed": true
+      }
+    },
+    "universal_rules": {
+      "max_overnight_single_position": 30.0,
+      "max_stop_distance_atr": 1.0,
+      "preferred_stop_distance_atr": 0.5
+    }
+  },
+
+  "exit_rules": {
+    "partial_profits": {
+      "first_partial_days": [3, 5],
+      "partial_size_percent": [33, 50],
+      "move_stop_to_breakeven": true
+    },
+    "trailing_stops": {
+      "high_adr_threshold": 6.0,
+      "high_adr_trailing_ma": 10,
+      "low_adr_trailing_ma": 20,
+      "exit_on_close_below_ma": true
+    },
+    "reentry_conditions": {
+      "setup_still_valid": true,
+      "max_stop_distance_atr": 1.0
+    }
+  },
+
+  "scanning_criteria": {
+    "performance_requirements": {
+      "rank_1m_min": 93,
+      "rank_3m_min": 95, 
+      "rank_6m_min": 97
+    },
+    "filters": {
+      "min_adr_percent": 5.0,
+      "min_dollar_volume": 10000000,
+      "min_price": 5.0,
+      "trend_intensity_min": 1.10,
+      "ma13_ma65_ratio_min": 1.10
+    },
+    "excluded_symbols": [
+      "AAPL", "AMZN", "GOOGL", "META", "NFLX", 
+      "DIS", "PFE", "COST", "V"
+    ],
+    "exclusion_reason": "ADR < 4%, too slow moving"
+  },
+
+  "sector_analysis": {
+    "hot_sector_indicators": [
+      "multiple_breakouts_together",
+      "sector_wide_strength"
+    ],
+    "hot_sector_bonus": {
+      "confidence_boost": 1.5,
+      "description": "3.5-star setup in hot sector = 5-star setup"
+    }
+  },
+
+  "intraday_execution": {
+    "opening_ranges": {
+      "1m": {
+        "description": "First minute candle high/low",
+        "start_time": "09:30:00",
+        "end_time": "09:31:00"
+      },
+      "5m": {
+        "description": "First 5-minute candle high/low",
+        "start_time": "09:30:00", 
+        "end_time": "09:35:00"
+      },
+      "60m": {
+        "description": "First hour high/low",
+        "start_time": "09:30:00",
+        "end_time": "10:30:00"
+      }
+    },
+    "entry_timing": {
+      "primary_time": "market_open",
+      "additional_entries": "throughout_day_if_acting_well",
+      "premarket_strategy": "identify_setups_execute_at_open"
+    },
+    "vwap_rules": {
+      "applicable_setups": ["parabolic_short"],
+      "entry_signals": [
+        "bounce_to_vwap_then_rejection", 
+        "first_red_candle_at_vwap"
+      ]
+    }
+  },
+
+  "risk_management": {
+    "maximum_drawdown": 15.0,
+    "daily_loss_limit": 3.0,
+    "position_correlation_max": 0.6,
+    "sector_concentration_max": 40.0,
+    "emergency_exit_triggers": [
+      "market_regime_change_to_bear",
+      "account_down_10_percent"
+    ]
+  },
+
+  "confidence_scoring": {
+    "5_star": {
+      "description": "Perfect setup, all conditions met",
+      "breakout_requirements": [
+        "clean_consolidation_5_20_days",
+        "volume_surge_2x_plus",
+        "perfect_ma_alignment",
+        "hot_sector",
+        "bull_market"
+      ],
+      "min_score": 4.5
+    },
+    "4_star": {
+      "description": "Strong setup, minor imperfections",
+      "min_score": 3.5
+    },
+    "3_star": {
+      "description": "Decent setup, some concerns",
+      "min_score": 2.5
+    },
+    "2_star": {
+      "description": "Marginal setup, high risk",
+      "min_score": 1.5
+    },
+    "1_star": {
+      "description": "Poor setup, avoid",
+      "min_score": 0.0
+    }
+  },
+
+  "metrics_required": [
+    "sma_10", "sma_20", "sma_50", "ema_13", "ema_65",
+    "adr_20", "atr_20", 
+    "performance_rank_1m", "performance_rank_3m", "performance_rank_6m",
+    "gap_percent", "extension_from_ma10", "extension_from_ma20",
+    "consecutive_up_days", "consecutive_down_days",
+    "dollar_volume_20d", "vwap", "distance_from_vwap",
+    "opening_range_1m", "opening_range_5m", "opening_range_60m",
+    "trend_intensity", "ma_angle_10", "ma_angle_20"
+  ],
+
+  "logging": {
+    "log_all_scans": true,
+    "log_rejected_setups": true,
+    "log_confidence_calculations": true,
+    "log_position_sizing": true,
+    "log_risk_checks": true,
+    "log_market_regime_changes": true
+  },
+
+  "backtesting": {
+    "start_date": "2020-01-01",
+    "end_date": "2023-12-31",
+    "initial_capital": 100000,
+    "benchmark": "SPY",
+    "test_individual_setups": true
+  }
+}
