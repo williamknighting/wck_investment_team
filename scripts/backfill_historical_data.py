@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Backfill Historical Data - Conservative approach
-Fetch 2 years of daily data for SPY and QQQ with careful API usage
+Fetch 2 years of daily data for SPY, QQQ, TSLA, and NVDA with careful API usage
 """
 import sys
 import os
@@ -9,8 +9,8 @@ from pathlib import Path
 from datetime import datetime, timezone, timedelta
 import time
 
-# Add src to path
-sys.path.append(str(Path(__file__).parent / 'src'))
+# Add project root to path
+sys.path.append(str(Path(__file__).parent.parent))
 
 # Load environment variables
 from dotenv import load_dotenv
@@ -23,7 +23,7 @@ from src.utils.logging_config import get_logger
 
 
 def backfill_historical_data():
-    """Conservative backfill of 2 years daily data for SPY and QQQ"""
+    """Conservative backfill of 2 years daily data for SPY, QQQ, TSLA, and NVDA"""
     print("📈 Backfilling Historical Data - Conservative Approach")
     print("=" * 60)
     
@@ -65,13 +65,13 @@ def backfill_historical_data():
         print(f"   Data Sources: {summary.get('data_sources', [])}")
         
         # Symbols to backfill
-        symbols = ['SPY', 'QQQ']
+        symbols = ['SPY', 'QQQ', 'TSLA', 'NVDA']
         
         print(f"\n🎯 Backfill Plan:")
         print(f"   Symbols: {symbols}")
         print(f"   Period: 2 years daily data")
         print(f"   Conservative: 1 request per second")
-        print(f"   Estimated time: ~{len(symbols)} seconds")
+        print(f"   Estimated time: ~{len(symbols) * 2} seconds")
         
         # Backfill each symbol
         successful_backfills = 0

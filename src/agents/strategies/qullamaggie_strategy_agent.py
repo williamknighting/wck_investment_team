@@ -165,7 +165,7 @@ Focus on mechanical rule execution with comprehensive risk management."""
     
     def _load_strategy_config(self) -> Dict[str, Any]:
         """Load Qullamaggie strategy configuration"""
-        config_path = Path(__file__).parent.parent.parent.parent.parent / "strategies" / "qullamaggie" / "rules.json"
+        config_path = Path(__file__).parent.parent.parent.parent / "strategies" / "qullamaggie" / "rules.json"
         
         try:
             with open(config_path, 'r') as f:
