@@ -64,8 +64,8 @@ def backfill_historical_data():
         print(f"   Total Records: {summary.get('total_records', 0)}")
         print(f"   Data Sources: {summary.get('data_sources', [])}")
         
-        # Symbols to backfill
-        symbols = ['SPY', 'QQQ', 'TSLA', 'NVDA']
+        # Symbols to backfill (full watchlist)
+        symbols = ['SPY', 'QQQ', 'TSLA', 'NVDA', 'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META']
         
         print(f"\n🎯 Backfill Plan:")
         print(f"   Symbols: {symbols}")
