@@ -1,0 +1,87 @@
+# AI Hedge Fund System Configuration
+# Main configuration file for agents, portfolio, and trading parameters
+
+system:
+  name: "WCK AI Hedge Fund"
+  version: "1.0.0"
+  environment: "development"
+  
+portfolio:
+  initial_size: 1000000  # $1M
+  max_risk_per_trade: 0.02  # 2%
+  max_position_allocation: 0.05  # 5%
+  min_reward_risk_ratio: 2.0
+  cash_reserve: 0.20  # 20%
+  account_tiers:
+    small: 50000
+    medium: 100000
+    large: 500000
+
+agents:
+  fund_director:
+    model: "gpt-4o-mini"
+    temperature: 0.1
+    max_tokens: 2000
+    role: "Senior Portfolio Manager"
+    
+  technical_analyst:
+    model: "gpt-4o-mini"
+    temperature: 0.1
+    max_tokens: 1500
+    role: "Technical Analysis Specialist"
+    
+  qullamaggie_agent:
+    model: "gpt-4o-mini"
+    temperature: 0.1
+    max_tokens: 1500
+    role: "Momentum Strategy Specialist"
+
+trading_strategies:
+  qullamaggie:
+    enabled: true
+    min_price: 5.0
+    min_gain_22d: 20.0  # 20% minimum
+    max_distance_52w: -20.0  # Within 20% of highs
+    min_volume_ratio: 0.5
+    min_market_cap: 1000000000  # $1B
+    stop_loss: 0.08  # 8%
+    profit_target: 0.16  # 16%
+    
+  technical_momentum:
+    enabled: true
+    rsi_overbought: 70
+    rsi_oversold: 30
+    volume_threshold: 1.5
+    ma_periods: [20, 50, 200]
+
+data:
+  duckdb_path: "data_store/market_data.duckdb"
+  default_period: "1y"
+  default_interval: "1d"
+  data_sources:
+    primary: "alpaca"
+    backup: "mock"
+  
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/hedge_fund.log"
+  max_size_mb: 10
+  backup_count: 5
+
+directories:
+  proposals: "proposals"
+  decisions: "decisions"
+  conversations: "conversations"
+  config: "config"
+  logs: "logs"
+  data: "data_store"
+
+risk_management:
+  max_correlation: 0.7  # Max correlation between positions
+  max_sector_allocation: 0.30  # 30% max per sector
+  drawdown_limit: 0.10  # 10% max drawdown
+  position_limits:
+    single_stock: 0.05  # 5%
+    sector: 0.30  # 30%
+    asset_class: 0.80  # 80%

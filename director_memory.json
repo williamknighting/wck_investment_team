@@ -1,0 +1,262 @@
+[
+  {
+    "decision_id": "decision_20250918_105636",
+    "timestamp": "2025-09-18T14:56:36.484139+00:00",
+    "proposals_reviewed": [
+      "qullamaggie_agent_TSLA_trade_20250918_143000",
+      "technical_agent_AAPL_trade_20250918_144000",
+      "value_agent_SPY_trade_20250918_143500"
+    ],
+    "approved_trades": [],
+    "rejected_trades": [
+      {
+        "action": "reject",
+        "proposal_id": "technical_agent_AAPL_trade_20250918_144000",
+        "symbol": "AAPL",
+        "reason": "Risk/reward ratio 0.5:1 below 2.0:1 minimum",
+        "discussion_points": [
+          "Rejected AAPL for insufficient risk/reward"
+        ]
+      },
+      {
+        "action": "reject",
+        "proposal_id": "value_agent_SPY_trade_20250918_143500",
+        "symbol": "SPY",
+        "reason": "Risk/reward ratio 1.5:1 below 2.0:1 minimum",
+        "discussion_points": [
+          "Rejected SPY for insufficient risk/reward"
+        ]
+      }
+    ],
+    "position_adjustments": [
+      {
+        "action": "adjust",
+        "proposal_id": "qullamaggie_agent_TSLA_trade_20250918_143000",
+        "symbol": "TSLA",
+        "original_size": 800,
+        "adjusted_size": 400,
+        "reason": "Position size reduced from 800 to 400 shares ($200,000 -> $100,000)",
+        "discussion_points": [
+          "Reduced TSLA position size for risk management"
+        ]
+      }
+    ],
+    "market_context": "Market Context as of 2025-09-18 14:56 UTC:\n\u2022 Market regime: Neutral with moderate volatility\n\u2022 Recent data freshness: All proposals reviewed with current market data\n\u2022 Risk environment: Standard risk parameters apply\n\u2022 Trading session: Active market hours",
+    "key_discussion_points": [
+      "Reduced TSLA position size for risk management",
+      "Rejected AAPL for insufficient risk/reward",
+      "Rejected SPY for insufficient risk/reward"
+    ],
+    "decision_rationale": "**DIRECTOR'S DECISION RATIONALE**\n\n**REJECTED TRADES (2):**\n\u2022 AAPL: Risk/reward ratio 0.5:1 below 2.0:1 minimum\n\u2022 SPY: Risk/reward ratio 1.5:1 below 2.0:1 minimum\n\n**DECISION FRAMEWORK:**\n\u2022 Minimum 2:1 risk/reward ratio enforced\n\u2022 Maximum $100,000 position size limit\n\u2022 Minimum 5/10 conviction requirement\n\u2022 Capital preservation prioritized over aggressive growth\n\nAll decisions reflect our mandate of consistent risk-adjusted returns.",
+    "execution_instructions": "**EXECUTION INSTRUCTIONS**\n\n**ADJUSTED POSITIONS:**\n\u2022 BUY 400 shares TSLA (size reduced for risk management)\n\n**EXECUTION REQUIREMENTS:**\n\u2022 All orders to be placed during active market hours\n\u2022 Stop losses to be set immediately upon fill\n\u2022 Position sizes are final - no increases without committee approval\n\u2022 Report execution status within 1 hour of market close\n",
+    "conversation_rounds": 0
+  },
+  {
+    "decision_id": "decision_20250918_105717",
+    "timestamp": "2025-09-18T14:57:17.147803+00:00",
+    "proposals_reviewed": [
+      "qullamaggie_agent_TSLA_trade_20250918_143000",
+      "technical_agent_AAPL_trade_20250918_144000",
+      "value_agent_SPY_trade_20250918_143500"
+    ],
+    "approved_trades": [],
+    "rejected_trades": [
+      {
+        "action": "reject",
+        "proposal_id": "technical_agent_AAPL_trade_20250918_144000",
+        "symbol": "AAPL",
+        "reason": "Risk/reward ratio 0.5:1 below 2.0:1 minimum",
+        "discussion_points": [
+          "Rejected AAPL for insufficient risk/reward"
+        ]
+      },
+      {
+        "action": "reject",
+        "proposal_id": "value_agent_SPY_trade_20250918_143500",
+        "symbol": "SPY",
+        "reason": "Risk/reward ratio 1.5:1 below 2.0:1 minimum",
+        "discussion_points": [
+          "Rejected SPY for insufficient risk/reward"
+        ]
+      }
+    ],
+    "position_adjustments": [
+      {
+        "action": "adjust",
+        "proposal_id": "qullamaggie_agent_TSLA_trade_20250918_143000",
+        "symbol": "TSLA",
+        "original_size": 800,
+        "adjusted_size": 400,
+        "reason": "Position size reduced from 800 to 400 shares ($200,000 -> $100,000)",
+        "discussion_points": [
+          "Reduced TSLA position size for risk management"
+        ]
+      }
+    ],
+    "market_context": "Market Context as of 2025-09-18 14:57 UTC:\n\u2022 Market regime: Neutral with moderate volatility\n\u2022 Recent data freshness: All proposals reviewed with current market data\n\u2022 Risk environment: Standard risk parameters apply\n\u2022 Trading session: Active market hours",
+    "key_discussion_points": [
+      "Reduced TSLA position size for risk management",
+      "Rejected AAPL for insufficient risk/reward",
+      "Rejected SPY for insufficient risk/reward"
+    ],
+    "decision_rationale": "**DIRECTOR'S DECISION RATIONALE**\n\n**REJECTED TRADES (2):**\n\u2022 AAPL: Risk/reward ratio 0.5:1 below 2.0:1 minimum\n\u2022 SPY: Risk/reward ratio 1.5:1 below 2.0:1 minimum\n\n**DECISION FRAMEWORK:**\n\u2022 Minimum 2:1 risk/reward ratio enforced\n\u2022 Maximum $100,000 position size limit\n\u2022 Minimum 5/10 conviction requirement\n\u2022 Capital preservation prioritized over aggressive growth\n\nAll decisions reflect our mandate of consistent risk-adjusted returns.",
+    "execution_instructions": "**EXECUTION INSTRUCTIONS**\n\n**ADJUSTED POSITIONS:**\n\u2022 BUY 400 shares TSLA (size reduced for risk management)\n\n**EXECUTION REQUIREMENTS:**\n\u2022 All orders to be placed during active market hours\n\u2022 Stop losses to be set immediately upon fill\n\u2022 Position sizes are final - no increases without committee approval\n\u2022 Report execution status within 1 hour of market close\n",
+    "conversation_rounds": 0
+  },
+  {
+    "decision_id": "decision_20250918_125715",
+    "timestamp": "2025-09-18T16:57:15.831433+00:00",
+    "proposals_reviewed": [
+      "qullamaggie_agent_TSLA_trade_20250918_143000",
+      "technical_agent_AAPL_trade_20250918_144000",
+      "value_agent_SPY_trade_20250918_143500"
+    ],
+    "approved_trades": [],
+    "rejected_trades": [
+      {
+        "action": "reject",
+        "proposal_id": "technical_agent_AAPL_trade_20250918_144000",
+        "symbol": "AAPL",
+        "reason": "Risk/reward ratio 0.5:1 below 2.0:1 minimum",
+        "discussion_points": [
+          "Rejected AAPL for insufficient risk/reward"
+        ]
+      },
+      {
+        "action": "reject",
+        "proposal_id": "value_agent_SPY_trade_20250918_143500",
+        "symbol": "SPY",
+        "reason": "Risk/reward ratio 1.5:1 below 2.0:1 minimum",
+        "discussion_points": [
+          "Rejected SPY for insufficient risk/reward"
+        ]
+      }
+    ],
+    "position_adjustments": [
+      {
+        "action": "adjust",
+        "proposal_id": "qullamaggie_agent_TSLA_trade_20250918_143000",
+        "symbol": "TSLA",
+        "original_size": 800,
+        "adjusted_size": 400,
+        "reason": "Position size reduced from 800 to 400 shares ($200,000 -> $100,000)",
+        "discussion_points": [
+          "Reduced TSLA position size for risk management"
+        ]
+      }
+    ],
+    "market_context": "Market Context as of 2025-09-18 16:57 UTC:\n\u2022 Market regime: Neutral with moderate volatility\n\u2022 Recent data freshness: All proposals reviewed with current market data\n\u2022 Risk environment: Standard risk parameters apply\n\u2022 Trading session: Active market hours",
+    "key_discussion_points": [
+      "Reduced TSLA position size for risk management",
+      "Rejected AAPL for insufficient risk/reward",
+      "Rejected SPY for insufficient risk/reward"
+    ],
+    "decision_rationale": "**DIRECTOR'S DECISION RATIONALE**\n\n**REJECTED TRADES (2):**\n\u2022 AAPL: Risk/reward ratio 0.5:1 below 2.0:1 minimum\n\u2022 SPY: Risk/reward ratio 1.5:1 below 2.0:1 minimum\n\n**DECISION FRAMEWORK:**\n\u2022 Minimum 2:1 risk/reward ratio enforced\n\u2022 Maximum $100,000 position size limit\n\u2022 Minimum 5/10 conviction requirement\n\u2022 Capital preservation prioritized over aggressive growth\n\nAll decisions reflect our mandate of consistent risk-adjusted returns.",
+    "execution_instructions": "**EXECUTION INSTRUCTIONS**\n\n**ADJUSTED POSITIONS:**\n\u2022 BUY 400 shares TSLA (size reduced for risk management)\n\n**EXECUTION REQUIREMENTS:**\n\u2022 All orders to be placed during active market hours\n\u2022 Stop losses to be set immediately upon fill\n\u2022 Position sizes are final - no increases without committee approval\n\u2022 Report execution status within 1 hour of market close\n",
+    "conversation_rounds": 1
+  },
+  {
+    "decision_id": "decision_20250918_125951",
+    "timestamp": "2025-09-18T16:59:51.804130+00:00",
+    "proposals_reviewed": [
+      "qullamaggie_agent_TSLA_trade_20250918_143000",
+      "technical_agent_AAPL_trade_20250918_144000",
+      "value_agent_SPY_trade_20250918_143500"
+    ],
+    "approved_trades": [],
+    "rejected_trades": [
+      {
+        "action": "reject",
+        "proposal_id": "technical_agent_AAPL_trade_20250918_144000",
+        "symbol": "AAPL",
+        "reason": "Risk/reward ratio 0.5:1 below 2.0:1 minimum",
+        "discussion_points": [
+          "Rejected AAPL for insufficient risk/reward"
+        ]
+      },
+      {
+        "action": "reject",
+        "proposal_id": "value_agent_SPY_trade_20250918_143500",
+        "symbol": "SPY",
+        "reason": "Risk/reward ratio 1.5:1 below 2.0:1 minimum",
+        "discussion_points": [
+          "Rejected SPY for insufficient risk/reward"
+        ]
+      }
+    ],
+    "position_adjustments": [
+      {
+        "action": "adjust",
+        "proposal_id": "qullamaggie_agent_TSLA_trade_20250918_143000",
+        "symbol": "TSLA",
+        "original_size": 800,
+        "adjusted_size": 400,
+        "reason": "Position size reduced from 800 to 400 shares ($200,000 -> $100,000)",
+        "discussion_points": [
+          "Reduced TSLA position size for risk management"
+        ]
+      }
+    ],
+    "market_context": "Market Context as of 2025-09-18 16:59 UTC:\n\u2022 Market regime: Neutral with moderate volatility\n\u2022 Recent data freshness: All proposals reviewed with current market data\n\u2022 Risk environment: Standard risk parameters apply\n\u2022 Trading session: Active market hours",
+    "key_discussion_points": [
+      "Reduced TSLA position size for risk management",
+      "Rejected AAPL for insufficient risk/reward",
+      "Rejected SPY for insufficient risk/reward"
+    ],
+    "decision_rationale": "**DIRECTOR'S DECISION RATIONALE**\n\n**REJECTED TRADES (2):**\n\u2022 AAPL: Risk/reward ratio 0.5:1 below 2.0:1 minimum\n\u2022 SPY: Risk/reward ratio 1.5:1 below 2.0:1 minimum\n\n**DECISION FRAMEWORK:**\n\u2022 Minimum 2:1 risk/reward ratio enforced\n\u2022 Maximum $100,000 position size limit\n\u2022 Minimum 5/10 conviction requirement\n\u2022 Capital preservation prioritized over aggressive growth\n\nAll decisions reflect our mandate of consistent risk-adjusted returns.",
+    "execution_instructions": "**EXECUTION INSTRUCTIONS**\n\n**ADJUSTED POSITIONS:**\n\u2022 BUY 400 shares TSLA (size reduced for risk management)\n\n**EXECUTION REQUIREMENTS:**\n\u2022 All orders to be placed during active market hours\n\u2022 Stop losses to be set immediately upon fill\n\u2022 Position sizes are final - no increases without committee approval\n\u2022 Report execution status within 1 hour of market close\n",
+    "conversation_rounds": 1
+  },
+  {
+    "decision_id": "decision_20250918_130844",
+    "timestamp": "2025-09-18T17:08:44.305816+00:00",
+    "proposals_reviewed": [
+      "qullamaggie_agent_TSLA_trade_20250918_143000",
+      "technical_agent_AAPL_trade_20250918_144000",
+      "value_agent_SPY_trade_20250918_143500"
+    ],
+    "approved_trades": [],
+    "rejected_trades": [
+      {
+        "action": "reject",
+        "proposal_id": "technical_agent_AAPL_trade_20250918_144000",
+        "symbol": "AAPL",
+        "reason": "Risk/reward ratio 0.5:1 below 2.0:1 minimum",
+        "discussion_points": [
+          "Rejected AAPL for insufficient risk/reward"
+        ]
+      },
+      {
+        "action": "reject",
+        "proposal_id": "value_agent_SPY_trade_20250918_143500",
+        "symbol": "SPY",
+        "reason": "Risk/reward ratio 1.5:1 below 2.0:1 minimum",
+        "discussion_points": [
+          "Rejected SPY for insufficient risk/reward"
+        ]
+      }
+    ],
+    "position_adjustments": [
+      {
+        "action": "adjust",
+        "proposal_id": "qullamaggie_agent_TSLA_trade_20250918_143000",
+        "symbol": "TSLA",
+        "original_size": 800,
+        "adjusted_size": 400,
+        "reason": "Position size reduced from 800 to 400 shares ($200,000 -> $100,000)",
+        "discussion_points": [
+          "Reduced TSLA position size for risk management"
+        ]
+      }
+    ],
+    "market_context": "Market Context as of 2025-09-18 17:08 UTC:\n\u2022 Market regime: Neutral with moderate volatility\n\u2022 Recent data freshness: All proposals reviewed with current market data\n\u2022 Risk environment: Standard risk parameters apply\n\u2022 Trading session: Active market hours",
+    "key_discussion_points": [
+      "Reduced TSLA position size for risk management",
+      "Rejected AAPL for insufficient risk/reward",
+      "Rejected SPY for insufficient risk/reward"
+    ],
+    "decision_rationale": "**DIRECTOR'S DECISION RATIONALE**\n\n**REJECTED TRADES (2):**\n\u2022 AAPL: Risk/reward ratio 0.5:1 below 2.0:1 minimum\n\u2022 SPY: Risk/reward ratio 1.5:1 below 2.0:1 minimum\n\n**DECISION FRAMEWORK:**\n\u2022 Minimum 2:1 risk/reward ratio enforced\n\u2022 Maximum $100,000 position size limit\n\u2022 Minimum 5/10 conviction requirement\n\u2022 Capital preservation prioritized over aggressive growth\n\nAll decisions reflect our mandate of consistent risk-adjusted returns.",
+    "execution_instructions": "**EXECUTION INSTRUCTIONS**\n\n**ADJUSTED POSITIONS:**\n\u2022 BUY 400 shares TSLA (size reduced for risk management)\n\n**EXECUTION REQUIREMENTS:**\n\u2022 All orders to be placed during active market hours\n\u2022 Stop losses to be set immediately upon fill\n\u2022 Position sizes are final - no increases without committee approval\n\u2022 Report execution status within 1 hour of market close\n",
+    "conversation_rounds": 1
+  }
+]

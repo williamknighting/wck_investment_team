@@ -1,0 +1,140 @@
+{
+  "session_id": "committee_20250918_125713",
+  "start_time": "2025-09-18T16:57:13.166727+00:00",
+  "end_time": "2025-09-18T16:57:15.832519+00:00",
+  "total_duration_seconds": 2.665792,
+  "participants": [
+    "director",
+    "risk_manager",
+    "qullamaggie_agent"
+  ],
+  "proposals_count": 2,
+  "conversation_turns": 12,
+  "final_decision_id": "decision_20250918_125715",
+  "conversation_log": [
+    {
+      "turn_number": 1,
+      "speaker": "research_agent",
+      "message": "Update market data and prepare research report",
+      "response": "Market data updated. Key markets: SPY +0.5%, QQQ +0.8%, VIX 18.5. Sector rotation continuing.",
+      "timestamp": "2025-09-18T16:57:13.230071+00:00",
+      "turn_type": "research_update",
+      "target_agent": null,
+      "duration_seconds": 2.0
+    },
+    {
+      "turn_number": 2,
+      "speaker": "qullamaggie_agent",
+      "message": "Generate trade proposal for SPY",
+      "response": "Trade proposal generated for SPY",
+      "timestamp": "2025-09-18T16:57:13.296863+00:00",
+      "turn_type": "proposal_generation",
+      "target_agent": null,
+      "duration_seconds": 0.06656789779663086
+    },
+    {
+      "turn_number": 3,
+      "speaker": "qullamaggie_agent",
+      "message": "Generate trade proposal for TSLA",
+      "response": "Trade proposal generated for TSLA",
+      "timestamp": "2025-09-18T16:57:13.301133+00:00",
+      "turn_type": "proposal_generation",
+      "target_agent": null,
+      "duration_seconds": 0.004266977310180664
+    },
+    {
+      "turn_number": 4,
+      "speaker": "director",
+      "message": "Review all proposals and prepare for committee meeting",
+      "response": "Reviewed 3 proposals",
+      "timestamp": "2025-09-18T16:57:13.303109+00:00",
+      "turn_type": "director_preparation",
+      "target_agent": null,
+      "duration_seconds": 0.0011746883392333984
+    },
+    {
+      "turn_number": 5,
+      "speaker": "director",
+      "message": "Start investment committee meeting",
+      "response": "**INVESTMENT COMMITTEE MEETING - 2025-09-18 12:57**\n\nI've reviewed 3 proposals before we begin:\n\n**HIGH CONVICTION (2):**\n\u2022 TSLA (qullamaggie_agent) - 9/10\n\u2022 AAPL (technical_agent) - 7/10\n\n**MODERATE CONVICTION (1):**\n\u2022 SPY (value_agent) - 5/10\n\n**MY INITIAL OBSERVATIONS:**\nWe have 3 proposals requiring decisions. I'll be asking pointed questions to stress-test each idea. Maximum 10 rounds of discussion.\n\nLet's begin with the highest conviction proposals and work our way through.",
+      "timestamp": "2025-09-18T16:57:13.303522+00:00",
+      "turn_type": "meeting_start",
+      "target_agent": null,
+      "duration_seconds": 1.0
+    },
+    {
+      "turn_number": 1,
+      "speaker": "director",
+      "message": "Challenge the TSLA momentum proposal - justify the position size",
+      "response": "pointed_question response",
+      "timestamp": "2025-09-18T16:57:13.303534+00:00",
+      "turn_type": "challenge",
+      "target_agent": "qullamaggie_agent",
+      "duration_seconds": 9.298324584960938e-06
+    },
+    {
+      "turn_number": 2,
+      "speaker": "qullamaggie_agent",
+      "message": "Defend TSLA proposal",
+      "response": "trade_proposal response",
+      "timestamp": "2025-09-18T16:57:13.808898+00:00",
+      "turn_type": "response",
+      "target_agent": null,
+      "duration_seconds": 0.0003120899200439453
+    },
+    {
+      "turn_number": 3,
+      "speaker": "director",
+      "message": "What's your assessment of the current proposals?",
+      "response": "As Director, I orchestrate investment committee meetings and make final trading decisions. Use 'start committee' to begin formal review.",
+      "timestamp": "2025-09-18T16:57:14.314026+00:00",
+      "turn_type": "challenge",
+      "target_agent": "risk_manager",
+      "duration_seconds": 6.198883056640625e-05
+    },
+    {
+      "turn_number": 4,
+      "speaker": "risk_manager",
+      "message": "Risk assessment",
+      "response": "As Risk Manager, I recommend conservative position sizing and thorough risk assessment before any trades. Please provide specific proposals for detailed evaluation.",
+      "timestamp": "2025-09-18T16:57:14.819454+00:00",
+      "turn_type": "response",
+      "target_agent": null,
+      "duration_seconds": 0.00010895729064941406
+    },
+    {
+      "turn_number": 5,
+      "speaker": "director",
+      "message": "Address the risk manager's concerns",
+      "response": "As Director, I orchestrate investment committee meetings and make final trading decisions. Use 'start committee' to begin formal review.",
+      "timestamp": "2025-09-18T16:57:15.325531+00:00",
+      "turn_type": "challenge",
+      "target_agent": "qullamaggie_agent",
+      "duration_seconds": 2.5987625122070312e-05
+    },
+    {
+      "turn_number": 6,
+      "speaker": "qullamaggie_agent",
+      "message": "Challenge the risk assessment",
+      "response": "qullamaggie_agent strategy agent ready for analysis and trade proposals.",
+      "timestamp": "2025-09-18T16:57:15.830719+00:00",
+      "turn_type": "challenge",
+      "target_agent": "risk_manager",
+      "duration_seconds": 3.886222839355469e-05
+    },
+    {
+      "turn_number": 12,
+      "speaker": "director",
+      "message": "Make final decision on all proposals",
+      "response": "Investment Committee Decision: 0 approved, 2 rejected, 1 adjusted out of 3 proposals reviewed. Decision made after 1 rounds of discussion.",
+      "timestamp": "2025-09-18T16:57:15.832471+00:00",
+      "turn_type": "final_decision",
+      "target_agent": null,
+      "duration_seconds": 0.0014541149139404297
+    }
+  ],
+  "errors_encountered": [
+    "Agent initialization failed: technical_analyst - BaseHedgeFundAgent.__init__() missing 2 required positional arguments: 'name' and 'description'"
+  ],
+  "session_summary": "Investment Committee Session committee_20250918_125713: 2 proposals reviewed, 0 approved, 2 rejected, 1 adjusted. Duration: 2.7s, 12 conversation turns. 1 errors encountered."
+}

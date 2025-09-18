@@ -12,14 +12,14 @@ from enum import Enum
 
 try:
     # Try relative imports first (works in package context)
-    from ...base_agent import BaseHedgeFundAgent, AgentCapability
-    from ....models.trade import TradeSignal, OrderSide
-    from ....utils.logging_config import get_logger
+    from ..base_agent import BaseHedgeFundAgent, AgentCapability
+    from ...models.trade import TradeSignal, OrderSide
+    from ...utils.logging_config import get_logger
 except ImportError:
     # Fall back to absolute imports (works in script context)
-    from agents.base_agent import BaseHedgeFundAgent, AgentCapability
-    from models.trade import TradeSignal, OrderSide
-    from utils.logging_config import get_logger
+    from src.agents.base_agent import BaseHedgeFundAgent, AgentCapability
+    from src.models.trade import TradeSignal, OrderSide
+    from src.utils.logging_config import get_logger
 
 
 class SetupType(str, Enum):
@@ -320,6 +320,20 @@ Focus on mechanical rule execution with comprehensive risk management."""
             # Store active setup
             self.active_setups[symbol] = best_setup
             
+            # Create analysis dict for markdown output
+            analysis_result = {
+                "setup_type": best_setup.setup_type.value,
+                "valid": True,
+                "confidence": best_setup.confidence,
+                "entry_price": best_setup.entry_price,
+                "stop_loss": best_setup.stop_loss,
+                "target": best_setup.target,
+                "reasoning": best_setup.reasoning
+            }
+            
+            # Write analysis to markdown file
+            self._write_analysis_to_markdown(symbol, analysis_result, technical_metrics)
+            
             return {
                 "type": "trade_setup",
                 "symbol": symbol,
@@ -327,6 +341,17 @@ Focus on mechanical rule execution with comprehensive risk management."""
                 "agent": self.name
             }
         else:
+            # Create analysis dict for no setup case
+            analysis_result = {
+                "setup_type": "None detected", 
+                "valid": False,
+                "confidence": 0,
+                "reasoning": "No valid Qullamaggie momentum setups identified based on current technical analysis."
+            }
+            
+            # Write analysis to markdown file even when no setup found
+            self._write_analysis_to_markdown(symbol, analysis_result, technical_metrics)
+            
             if not scan_mode:
                 return {
                     "type": "no_setup",
@@ -337,68 +362,39 @@ Focus on mechanical rule execution with comprehensive risk management."""
             return {"type": "no_setup"}
     
     def _get_technical_metrics(self, symbol: str) -> Optional[Dict[str, Any]]:
-        """Get technical metrics from SimpleTechnicalAnalyst (DuckDB only, NO API calls)"""
+        """Request technical metrics from Technical Analyst Agent via AutoGen messaging"""
         try:
-            # Import SimpleTechnicalAnalyst which ONLY uses DuckDB
+            # For now, we'll use a simplified approach until proper agent communication is set up
+            # TODO: Implement proper AutoGen agent-to-agent communication
+            
+            # Import the technical analyst class (temporary direct access)
             try:
                 from ..technical_analyst import SimpleTechnicalAnalyst
             except ImportError:
-                from agents.technical_analyst import SimpleTechnicalAnalyst
+                from src.agents.technical_analyst import SimpleTechnicalAnalyst
             
-            # Create simple technical analyst that ONLY uses DuckDB
+            # Get metrics via technical analyst (will be replaced with agent messaging)
             technical_analyst = SimpleTechnicalAnalyst()
-            
-            # Calculate metrics using DuckDB data ONLY
             metrics = technical_analyst.calculate_all_metrics(symbol, period="1y", interval="1d")
             
             if metrics:
-                # Convert TechnicalMetrics to dict format
+                # Convert TechnicalMetrics dataclass to dict for processing
                 metrics_dict = {
-                    "moving_averages": {
-                        "current_price": metrics.moving_averages.get("current_price", 0),
-                        "sma_10": metrics.moving_averages.get("sma_10", 0),
-                        "sma_20": metrics.moving_averages.get("sma_20", 0),
-                        "sma_50": metrics.moving_averages.get("sma_50", 0),
-                        "ma_alignment": metrics.moving_averages.get("ma_alignment", False),
-                        "ma_angle_10": metrics.moving_averages.get("ma_angle_10", 0),
-                        "ma_angle_20": metrics.moving_averages.get("ma_angle_20", 0)
-                    },
-                    "momentum_indicators": {
-                        "consecutive_up_days": metrics.momentum_indicators.get("consecutive_up_days", 0),
-                        "consecutive_down_days": metrics.momentum_indicators.get("consecutive_down_days", 0),
-                        "gain_22d": metrics.momentum_indicators.get("gain_22d", 0),
-                        "gain_67d": metrics.momentum_indicators.get("gain_67d", 0),
-                        "distance_from_52w_high": metrics.momentum_indicators.get("distance_from_52w_high", 0)
-                    },
-                    "volatility_indicators": {
-                        "adr_20": metrics.volatility_indicators.get("adr_20", 0),
-                        "atr_20": metrics.volatility_indicators.get("atr_20", 0)
-                    },
-                    "volume_indicators": {
-                        "dollar_volume_20d": metrics.volume_indicators.get("dollar_volume_20d", 0),
-                        "volume_ratio": metrics.volume_indicators.get("volume_ratio", 1.0),
-                        "volume_surge": metrics.volume_indicators.get("volume_surge", False)
-                    },
-                    "pattern_metrics": {
-                        "gap_percent": metrics.pattern_metrics.get("gap_percent", 0),
-                        "consolidation_days": metrics.pattern_metrics.get("consolidation_days", 0),
-                        "extension_from_20ma": metrics.pattern_metrics.get("extension_from_20ma", 0)
-                    },
-                    "setup_scores": {
-                        "breakout_score": metrics.setup_scores.get("breakout_score", 0),
-                        "short_score": metrics.setup_scores.get("short_score", 0)
-                    }
+                    "moving_averages": metrics.moving_averages,
+                    "momentum_indicators": metrics.momentum_indicators,
+                    "volatility_indicators": metrics.volatility_indicators,
+                    "volume_indicators": metrics.volume_indicators,
+                    "pattern_metrics": metrics.pattern_metrics,
+                    "setup_scores": metrics.setup_scores,
+                    "risk_metrics": metrics.risk_metrics
                 }
                 
-                # Ensure all required fields exist with defaults
-                self._ensure_required_metrics(metrics_dict)
-                
-                self.logger.info(f"Got technical metrics for {symbol} from DuckDB (NO API calls)")
+                self.logger.info(f"Received technical analysis for {symbol} (via technical analyst)")
                 return metrics_dict
             else:
-                self.logger.error(f"No technical metrics returned for {symbol}")
+                self.logger.error(f"No technical metrics received for {symbol}")
                 return None
-            
+                
         except Exception as e:
             self.logger.error(f"Error getting technical metrics for {symbol}: {e}")
             return None
@@ -946,6 +942,130 @@ Focus on mechanical rule execution with comprehensive risk management."""
             "agent": self.name
         }
     
+    def _write_analysis_to_markdown(self, symbol: str, analysis: Dict[str, Any], technical_metrics: Dict[str, Any]) -> None:
+        """Write Qullamaggie analysis to markdown file"""
+        try:
+            from datetime import datetime
+            import os
+            
+            # Create analysis directory if it doesn't exist
+            analysis_dir = Path("analysis")
+            analysis_dir.mkdir(exist_ok=True)
+            
+            # Generate filename with timestamp
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"qullamaggie_{symbol}_{timestamp}.md"
+            filepath = analysis_dir / filename
+            
+            # Extract key metrics
+            price = technical_metrics["moving_averages"]["current_price"]
+            sma_20 = technical_metrics["moving_averages"]["sma_20"]
+            gain_22d = technical_metrics["momentum_indicators"]["gain_22d"]
+            gain_67d = technical_metrics["momentum_indicators"]["gain_67d"]
+            distance_52w = technical_metrics["momentum_indicators"]["distance_from_52w_high"]
+            volume_ratio = technical_metrics["volume_indicators"]["volume_ratio"]
+            extension_20ma = technical_metrics["pattern_metrics"]["extension_from_20ma"]
+            breakout_score = technical_metrics["setup_scores"]["breakout_score"]
+            
+            # Create markdown content
+            markdown_content = f"""# Qullamaggie Strategy Analysis - {symbol}
+
+**Date**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
+**Agent**: Qullamaggie Strategy Agent  
+**Account**: ${self.account_size:,.0f} ({self.account_tier} tier)
+
+## 📊 Current Market Data
+
+| Metric | Value |
+|--------|-------|
+| **Current Price** | ${price:.2f} |
+| **20-day SMA** | ${sma_20:.2f} |
+| **Extension from 20-SMA** | {extension_20ma:+.1f}% |
+| **22-day Performance** | {gain_22d:+.1f}% |
+| **67-day Performance** | {gain_67d:+.1f}% |
+| **Distance from 52w High** | {distance_52w:.1f}% |
+| **Volume Ratio** | {volume_ratio:.2f}x |
+| **Breakout Score** | {breakout_score:.1f}/5.0 |
+
+## 🎯 Qullamaggie Strategy Assessment
+
+### Core Criteria Analysis
+
+| Criteria | Status | Value | Notes |
+|----------|--------|--------|-------|
+| **Strong Trend (>20% in 22d)** | {"✅" if gain_22d > 20 else "❌"} | {gain_22d:+.1f}% | {"Excellent momentum" if gain_22d > 20 else "Weak momentum"} |
+| **Above 20-SMA** | {"✅" if extension_20ma > 0 else "❌"} | {extension_20ma:+.1f}% | {"Above key support" if extension_20ma > 0 else "Below support"} |
+| **Not Over-Extended (<30%)** | {"✅" if extension_20ma < 30 else "❌"} | {extension_20ma:.1f}% | {"Reasonable extension" if extension_20ma < 30 else "Over-extended"} |
+| **Near 52w Highs (>-20%)** | {"✅" if distance_52w > -20 else "❌"} | {distance_52w:.1f}% | {"Close to highs" if distance_52w > -20 else "Far from highs"} |
+
+### Setup Analysis
+
+**Setup Type**: {analysis.get("setup_type", "None detected")}  
+**Valid Setup**: {"Yes" if analysis.get("valid", False) else "No"}  
+**Confidence**: {analysis.get("confidence", 0)}/5.0  
+
+{f"**Entry Price**: ${analysis.get('entry_price', 0):.2f}" if analysis.get("valid") else ""}  
+{f"**Stop Loss**: ${analysis.get('stop_loss', 0):.2f}" if analysis.get("valid") else ""}  
+{f"**Target**: ${analysis.get('target', 0):.2f}" if analysis.get("valid") else ""}  
+
+### Strategy Reasoning
+
+{analysis.get("reasoning", "No specific reasoning provided")}
+
+## 📋 Overall Assessment
+
+{self._get_overall_verdict(gain_22d, extension_20ma, distance_52w, analysis.get("valid", False))}
+
+## 🔄 Next Actions
+
+{self._get_next_actions(analysis)}
+
+---
+
+*Generated by Qullamaggie Strategy Agent - AI Hedge Fund System*  
+*Technical analysis provided by Technical Analyst Agent via DuckDB*
+"""
+
+            # Write to file
+            with open(filepath, 'w') as f:
+                f.write(markdown_content)
+            
+            self.logger.info(f"Qullamaggie analysis written to {filepath}")
+            
+        except Exception as e:
+            self.logger.error(f"Error writing analysis to markdown: {e}")
+    
+    def _get_overall_verdict(self, gain_22d: float, extension_20ma: float, distance_52w: float, valid_setup: bool) -> str:
+        """Generate overall verdict based on analysis"""
+        criteria_met = sum([
+            gain_22d > 20,  # Strong trend
+            extension_20ma > 0,  # Above 20-SMA
+            extension_20ma < 30,  # Not over-extended
+            distance_52w > -20  # Near highs
+        ])
+        
+        if valid_setup and criteria_met >= 3:
+            return "🟢 **STRONG BUY CANDIDATE** - Multiple Qullamaggie criteria met with valid setup detected."
+        elif criteria_met >= 3:
+            return "🟡 **WATCH LIST** - Good fundamentals but no clear setup yet. Monitor for entry opportunity."
+        elif criteria_met == 2:
+            return "⚪ **MARGINAL** - Some positive signals but lacks conviction for Qullamaggie strategy."
+        else:
+            return "🔴 **NOT SUITABLE** - Does not meet Qullamaggie momentum criteria."
+    
+    def _get_next_actions(self, analysis: Dict[str, Any]) -> str:
+        """Generate next action recommendations"""
+        if analysis.get("valid", False):
+            return f"""- **Execute Trade**: Consider entering position at ${analysis.get('entry_price', 0):.2f}
+- **Set Stop Loss**: Place stop at ${analysis.get('stop_loss', 0):.2f}
+- **Monitor**: Watch for volume confirmation and clean breakout
+- **Risk Management**: Position size according to account tier rules"""
+        else:
+            return """- **Continue Monitoring**: Watch for setup development
+- **Wait for Confirmation**: Look for volume surge and clean breakout
+- **Review Daily**: Check for changing momentum patterns
+- **Patience**: Wait for proper Qullamaggie setup before entry"""
+
     def _general_response(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """Handle general requests"""
         return {

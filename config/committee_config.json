@@ -1,0 +1,78 @@
+{
+  "agents": {
+    "director": {
+      "enabled": true,
+      "max_conversation_rounds": 10,
+      "early_termination_threshold": 8,
+      "personality_traits": {
+        "decisiveness": "high",
+        "thoroughness": "high",
+        "directness": "high",
+        "authority": "final"
+      }
+    },
+    "risk_manager": {
+      "enabled": true,
+      "auto_veto_threshold": 8.0,
+      "challenge_threshold": 6.0,
+      "conservative_bias": true,
+      "position_size_limits": {
+        "max_single_position": 0.05,
+        "max_portfolio_risk": 0.02
+      }
+    },
+    "qullamaggie_agent": {
+      "enabled": true,
+      "conviction_threshold": 6,
+      "strategy_focus": "momentum",
+      "risk_tolerance": "moderate",
+      "position_sizing": "conviction_based"
+    },
+    "technical_analyst": {
+      "enabled": true,
+      "analysis_symbols": ["SPY", "QQQ", "TSLA", "AAPL", "NVDA"],
+      "analysis_depth": "comprehensive",
+      "reactive_mode": true
+    }
+  },
+  "conversation": {
+    "max_turns": 20,
+    "turn_timeout_seconds": 30,
+    "allow_interruptions": true,
+    "challenge_cooldown_turns": 2,
+    "debate_topics": [
+      "position_sizing",
+      "risk_management",
+      "timing",
+      "market_conditions",
+      "strategy_conflicts"
+    ]
+  },
+  "workflow": {
+    "phases": [
+      "research_update",
+      "technical_analysis",
+      "proposal_generation",
+      "director_preparation",
+      "committee_conversation",
+      "final_decision"
+    ],
+    "parallel_execution": {
+      "proposal_generation": true,
+      "technical_analysis": false
+    }
+  },
+  "error_handling": {
+    "max_retries": 3,
+    "retry_delay_seconds": 1,
+    "continue_on_agent_failure": true,
+    "critical_agents": ["director"],
+    "timeout_handling": "graceful"
+  },
+  "logging": {
+    "conversation_detail": "full",
+    "performance_metrics": true,
+    "error_tracking": true,
+    "decision_audit": true
+  }
+}
