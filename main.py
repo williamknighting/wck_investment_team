@@ -13,6 +13,10 @@ from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
 from pathlib import Path
 import time
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Add project root to path
 sys.path.append('.')
@@ -55,9 +59,20 @@ class WCKInvestmentCLI:
             self.terminal.print_status("🚀 Initializing WCK Investment Team...")
             
             # Check API key
-            if not os.getenv("OPENAI_API_KEY"):
+            api_key = os.getenv("OPENAI_API_KEY")
+            if not api_key:
                 self.terminal.print_error("OPENAI_API_KEY environment variable not set")
+                print("\n💡 To fix this:")
+                print("   1. Make sure you have a .env file in the project root")
+                print("   2. Add this line to your .env file:")
+                print("      OPENAI_API_KEY=your_actual_api_key_here")
+                print("   3. Get your API key from: https://platform.openai.com/api-keys")
+                print("\n   Or set it directly: export OPENAI_API_KEY=your_key")
                 sys.exit(1)
+            
+            # Validate API key format
+            if not api_key.startswith('sk-'):
+                self.terminal.print_warning(f"API key format looks incorrect (should start with 'sk-')")
             
             # Initialize orchestrator
             self.orchestrator = InvestmentCommitteeOrchestrator(self.config)

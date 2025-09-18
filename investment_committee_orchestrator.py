@@ -16,6 +16,10 @@ from pathlib import Path
 from dataclasses import dataclass, asdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import traceback
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Add project root to path
 sys.path.append('.')
@@ -140,11 +144,10 @@ class InvestmentCommitteeOrchestrator:
                         agent_prompt = agent_config.get('prompt', '')
                         agent_personality = agent_config.get('personality', '')
                         
-                        # Initialize agent with config
+                        # Initialize agent with config (remove system_message to avoid conflict)
                         self.agents[agent_name] = agent_class(
                             name=agent_name,
-                            description=f"{agent_config.get('name', agent_name)} - {agent_personality}",
-                            system_message=agent_prompt
+                            description=f"{agent_config.get('name', agent_name)} - {agent_personality}"
                         )
                         
                         self.logger.info(f"Initialized {agent_name}")
