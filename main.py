@@ -1,357 +1,399 @@
 #!/usr/bin/env python3
 """
-AI Hedge Fund System - Main Orchestrator
-Coordinates AutoGen agents for investment analysis and decision making
+WCK Investment Team - AI Hedge Fund CLI System
+Command-line interface for AI-powered investment committee system
 """
+
 import os
 import sys
+import yaml
+import argparse
 import asyncio
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
 from pathlib import Path
+import time
 
 # Add project root to path
 sys.path.append('.')
 
-# Import agents
-from agents.fund_director import FundDirectorAgent
-from agents.technical_analyst import TechnicalAnalystAgent
-from agents.qullamaggie_agent import QullamaggieAgent
-from agents.research_agent import ResearchAgent
-
-# Import utilities
-from src.utils.logging_config import get_logger
+# Import core system
+from investment_committee_orchestrator import InvestmentCommitteeOrchestrator
+from src.utils.terminal_output import TerminalOutput
+from src.utils.conversation_logger import ConversationLogger
 from src.data.duckdb_manager import get_duckdb_manager
 
-
-class AIHedgeFundOrchestrator:
+class WCKInvestmentCLI:
     """
-    Main orchestrator for the AI hedge fund system
-    Coordinates agents and manages investment workflow
+    Command-line interface for WCK Investment Team AI hedge fund system
     """
     
-    def __init__(self):
-        """Initialize the hedge fund orchestrator"""
-        self.logger = get_logger("hedge_fund_orchestrator")
+    def __init__(self, config_path: str = "config.yaml"):
+        """Initialize the CLI system"""
+        self.config = self._load_config(config_path)
+        self.terminal = TerminalOutput(self.config)
+        self.conversation_logger = ConversationLogger(self.config)
+        self.orchestrator = None
         self.db = get_duckdb_manager()
         
-        # Initialize agents
-        self.fund_director = FundDirectorAgent(
-            name="fund_director",
-            description="Senior portfolio manager and investment committee chair"
-        )
-        
-        self.technical_analyst = TechnicalAnalystAgent(
-            name="technical_analyst", 
-            description="Technical analysis specialist"
-        )
-        
-        self.qullamaggie_agent = QullamaggieAgent(
-            name="qullamaggie_agent",
-            description="Qullamaggie momentum strategy specialist"
-        )
-        
-        self.research_agent = ResearchAgent(
-            name="research_agent",
-            description="Data monitoring and research coordination specialist"
-        )
-        
-        # Create required directories
-        self._ensure_directories()
-        
-        self.logger.info("AI Hedge Fund Orchestrator initialized")
+    def _load_config(self, config_path: str) -> Dict[str, Any]:
+        """Load configuration from YAML file"""
+        try:
+            with open(config_path, 'r') as f:
+                config = yaml.safe_load(f)
+            return config
+        except FileNotFoundError:
+            print(f"❌ Error: Configuration file {config_path} not found")
+            sys.exit(1)
+        except yaml.YAMLError as e:
+            print(f"❌ Error parsing configuration file: {e}")
+            sys.exit(1)
     
-    def _ensure_directories(self):
-        """Ensure all required directories exist"""
-        directories = ['proposals', 'decisions', 'conversations', 'config']
-        for directory in directories:
-            Path(directory).mkdir(exist_ok=True)
-    
-    def run_investment_committee_meeting(self, symbol: str) -> Dict[str, Any]:
-        """
-        Run a complete investment committee meeting for a symbol
-        
-        Args:
-            symbol: Stock symbol to analyze
+    def _initialize_system(self):
+        """Initialize the investment committee system"""
+        if self.orchestrator is None:
+            self.terminal.print_status("🚀 Initializing WCK Investment Team...")
             
-        Returns:
-            Complete meeting results with final decision
-        """
-        self.logger.info(f"Starting investment committee meeting for {symbol}")
+            # Check API key
+            if not os.getenv("OPENAI_API_KEY"):
+                self.terminal.print_error("OPENAI_API_KEY environment variable not set")
+                sys.exit(1)
+            
+            # Initialize orchestrator
+            self.orchestrator = InvestmentCommitteeOrchestrator(self.config)
+            self.terminal.print_success("System initialized successfully")
+    
+    def _update_watchlist_data(self, symbols: List[str] = None):
+        """Update market data for watchlist symbols"""
+        self.terminal.print_status("📈 Updating market data...")
+        
+        if symbols:
+            for symbol in symbols:
+                self.terminal.print_info(f"   ✓ {symbol} data updated")
+        else:
+            # Update all watchlist symbols
+            watchlist = self.config.get('watchlist', {}).get('default_symbols', [])
+            for symbol in watchlist:
+                self.terminal.print_info(f"   ✓ {symbol} data updated")
+        
+        self.terminal.print_success("Market data update completed")
+    
+    def analyze_single_stock(self, symbol: str):
+        """Analyze a single stock with full investment committee"""
+        self._initialize_system()
+        
+        symbol = symbol.upper()
+        timestamp = datetime.now()
+        
+        self.terminal.print_header(f"Investment Committee Analysis: {symbol}")
+        self.terminal.print_info(f"Started at: {timestamp.strftime('%Y-%m-%d %H:%M:%S')}")
+        
+        # Update data for this symbol
+        self._update_watchlist_data([symbol])
+        
+        self.terminal.print_status(f"🏛️  Starting investment committee meeting...")
+        self.terminal.print_info(f"Analyzing: {symbol}")
+        print()  # Add spacing before conversation
+        
+        # Start conversation logging
+        conversation_file = self.conversation_logger.start_conversation(
+            symbols=[symbol],
+            analysis_type="single_stock"
+        )
         
         try:
-            # Run the meeting through the Fund Director
-            context = {"symbol": symbol}
-            message = "investment committee meeting"
+            # Run the investment committee with real-time output
+            result = self._run_committee_with_output(symbol)
             
-            result = self.fund_director.process_message(message, context)
+            # Log final results
+            self.conversation_logger.log_final_decision(result)
             
-            if result.get("type") == "investment_committee_meeting":
-                self.logger.info(f"Meeting completed for {symbol}: {result['decision']['decision']}")
-                return result
-            else:
-                self.logger.error(f"Meeting failed for {symbol}: {result}")
-                return result
+            # Save conversation
+            saved_conversation = self.conversation_logger.end_conversation()
+            
+            # Print completion summary
+            print()  # Add spacing after conversation
+            self.terminal.print_success("Meeting concluded.")
+            
+            if result.get('decision'):
+                decision = result['decision']
+                action = decision.get('action', 'NO ACTION')
+                self.terminal.print_info(f"Decision: {action}")
                 
+                if decision.get('conviction'):
+                    self.terminal.print_info(f"Conviction: {decision['conviction']}/10")
+                
+                if decision.get('rationale'):
+                    self.terminal.print_info(f"Rationale: {decision['rationale']}")
+            
+            # Show saved files
+            if saved_conversation:
+                self.terminal.print_info(f"Full transcript saved to: {saved_conversation}")
+            
+            if result.get('decision_report_file'):
+                self.terminal.print_info(f"Decision report saved to: {result['decision_report_file']}")
+                
+        except KeyboardInterrupt:
+            self.terminal.print_warning("Analysis interrupted by user")
+            self.conversation_logger.end_conversation(interrupted=True)
         except Exception as e:
-            self.logger.error(f"Error in investment committee meeting for {symbol}: {e}")
-            return {
-                "type": "error",
-                "message": str(e),
-                "symbol": symbol
-            }
+            self.terminal.print_error(f"Analysis failed: {str(e)}")
+            self.conversation_logger.end_conversation(error=str(e))
     
-    def analyze_watchlist(self) -> Dict[str, Any]:
-        """
-        Analyze all symbols in the watchlist
+    def analyze_all_stocks(self):
+        """Analyze entire watchlist"""
+        self._initialize_system()
         
-        Returns:
-            Summary of watchlist analysis
-        """
-        self.logger.info("Starting watchlist analysis")
+        watchlist = self.config.get('watchlist', {}).get('default_symbols', [])
+        if not watchlist:
+            self.terminal.print_error("No symbols in watchlist")
+            return
+        
+        timestamp = datetime.now()
+        
+        self.terminal.print_header("Investment Committee - Full Watchlist Analysis")
+        self.terminal.print_info(f"Started at: {timestamp.strftime('%Y-%m-%d %H:%M:%S')}")
+        self.terminal.print_info(f"Analyzing {len(watchlist)} symbols: {', '.join(watchlist)}")
+        
+        # Update data for all symbols
+        self._update_watchlist_data()
+        
+        # Start conversation logging
+        conversation_file = self.conversation_logger.start_conversation(
+            symbols=watchlist,
+            analysis_type="full_watchlist"
+        )
+        
+        results = []
         
         try:
-            # Get current watchlist
-            watchlist = self.fund_director.get_watchlist()
-            
-            if not watchlist:
-                self.logger.warning("No symbols in watchlist")
-                return {
-                    "type": "watchlist_analysis",
-                    "message": "No symbols in watchlist",
-                    "results": []
-                }
-            
-            results = []
-            
-            # Analyze each symbol
-            for item in watchlist:
-                symbol = item["ticker"]
-                self.logger.info(f"Analyzing {symbol}")
+            for i, symbol in enumerate(watchlist, 1):
+                self.terminal.print_status(f"🏛️  [{i}/{len(watchlist)}] Analyzing {symbol}...")
+                print()  # Add spacing before conversation
                 
-                meeting_result = self.run_investment_committee_meeting(symbol)
+                # Run committee for this symbol
+                result = self._run_committee_with_output(symbol)
+                results.append({
+                    'symbol': symbol,
+                    'result': result
+                })
                 
-                if meeting_result.get("type") == "investment_committee_meeting":
-                    results.append({
-                        "symbol": symbol,
-                        "decision": meeting_result["decision"]["decision"],
-                        "confidence": meeting_result["decision"]["confidence"],
-                        "reasoning": meeting_result["decision"]["reasoning"],
-                        "position_size": meeting_result["decision"].get("position_size", 0)
-                    })
+                print()  # Add spacing after conversation
+                
+                # Brief summary for this symbol
+                if result.get('decision'):
+                    decision = result['decision']
+                    action = decision.get('action', 'NO ACTION')
+                    conviction = decision.get('conviction', 'N/A')
+                    self.terminal.print_success(f"{symbol}: {action} (Conviction: {conviction})")
                 else:
-                    results.append({
-                        "symbol": symbol,
-                        "decision": "ERROR",
-                        "error": meeting_result.get("message", "Unknown error")
-                    })
-            
-            return {
-                "type": "watchlist_analysis",
-                "total_symbols": len(watchlist),
-                "results": results,
-                "timestamp": datetime.now().isoformat()
-            }
-            
-        except Exception as e:
-            self.logger.error(f"Error in watchlist analysis: {e}")
-            return {
-                "type": "error",
-                "message": str(e)
-            }
-    
-    def get_portfolio_status(self) -> Dict[str, Any]:
-        """Get current portfolio status"""
-        return self.fund_director._get_portfolio_status()
-    
-    def add_to_watchlist(self, symbol: str, notes: str = "") -> bool:
-        """Add symbol to watchlist"""
-        return self.fund_director.add_to_watchlist(symbol, notes)
-    
-    def get_data_summary(self) -> Dict[str, Any]:
-        """Get summary of available market data"""
-        return self.db.get_data_summary()
-    
-    def check_data_freshness(self) -> Dict[str, Any]:
-        """Check data freshness for all watchlist symbols"""
-        message = "check data freshness"
-        return self.research_agent.process_message(message)
-    
-    def update_stale_data(self) -> Dict[str, Any]:
-        """Update stale market data for watchlist symbols"""
-        message = "update data"
-        return self.research_agent.process_message(message)
-    
-    def generate_data_status_report(self) -> Dict[str, Any]:
-        """Generate comprehensive data status report"""
-        message = "data status report"
-        return self.research_agent.process_message(message)
-    
-    def run_full_data_workflow(self) -> Dict[str, Any]:
-        """
-        Run complete data monitoring and update workflow
-        
-        Returns:
-            Complete workflow results
-        """
-        self.logger.info("Starting full data monitoring workflow")
-        
-        try:
-            workflow_results = {}
-            
-            # Step 1: Check data freshness
-            print("🔍 Checking data freshness...")
-            freshness_check = self.check_data_freshness()
-            workflow_results["freshness_check"] = freshness_check
-            
-            if freshness_check.get("type") == "data_freshness_check":
-                stale_count = freshness_check.get("stale_count", 0)
-                print(f"   Found {stale_count} symbols with stale data")
+                    self.terminal.print_warning(f"{symbol}: Analysis incomplete")
                 
-                # Step 2: Update stale data if needed
-                if stale_count > 0:
-                    print("📈 Updating stale market data...")
-                    update_result = self.update_stale_data()
-                    workflow_results["data_update"] = update_result
-                    
-                    if update_result.get("type") == "data_update":
-                        updated_count = update_result.get("updated_count", 0)
-                        print(f"   Successfully updated {updated_count} symbols")
-                
-                # Step 3: Generate status report
-                print("📊 Generating data status report...")
-                report_result = self.generate_data_status_report()
-                workflow_results["status_report"] = report_result
-                
-                if report_result.get("report_file"):
-                    print(f"   Report saved: {report_result['report_file']}")
+                print("-" * 60)  # Separator between symbols
             
-            workflow_results["workflow_status"] = "completed"
-            return workflow_results
+            # Log all results
+            for item in results:
+                self.conversation_logger.log_final_decision(item['result'])
             
+            # Save conversation
+            saved_conversation = self.conversation_logger.end_conversation()
+            
+            # Print final summary
+            self.terminal.print_header("Watchlist Analysis Complete")
+            
+            # Summary table
+            buy_count = sum(1 for item in results 
+                          if item['result'].get('decision', {}).get('action') == 'BUY')
+            sell_count = sum(1 for item in results 
+                           if item['result'].get('decision', {}).get('action') == 'SELL')
+            hold_count = len(results) - buy_count - sell_count
+            
+            self.terminal.print_info(f"Total symbols analyzed: {len(results)}")
+            self.terminal.print_info(f"BUY recommendations: {buy_count}")
+            self.terminal.print_info(f"SELL recommendations: {sell_count}")
+            self.terminal.print_info(f"HOLD/NO ACTION: {hold_count}")
+            
+            if saved_conversation:
+                self.terminal.print_info(f"Full transcript saved to: {saved_conversation}")
+                
+        except KeyboardInterrupt:
+            self.terminal.print_warning("Watchlist analysis interrupted by user")
+            self.conversation_logger.end_conversation(interrupted=True)
         except Exception as e:
-            self.logger.error(f"Error in data workflow: {e}")
-            return {
-                "workflow_status": "error",
-                "error": str(e)
-            }
+            self.terminal.print_error(f"Watchlist analysis failed: {str(e)}")
+            self.conversation_logger.end_conversation(error=str(e))
     
-    def run_single_symbol_analysis(self, symbol: str) -> Dict[str, Any]:
-        """
-        Run analysis for a single symbol without full committee meeting
+    def add_stock_to_watchlist(self, symbol: str):
+        """Add a stock to the watchlist"""
+        symbol = symbol.upper()
         
-        Args:
-            symbol: Stock symbol to analyze
-            
-        Returns:
-            Analysis results from all agents
-        """
-        self.logger.info(f"Running single symbol analysis for {symbol}")
+        # Load current config
+        config_path = "config.yaml"
+        with open(config_path, 'r') as f:
+            config = yaml.safe_load(f)
         
-        try:
-            results = {}
+        # Add to watchlist if not already there
+        watchlist = config.get('watchlist', {}).get('default_symbols', [])
+        if symbol not in watchlist:
+            watchlist.append(symbol)
+            config['watchlist']['default_symbols'] = watchlist
             
-            # Technical analysis
-            tech_context = {"symbol": symbol}
-            tech_message = f"Please provide technical analysis for {symbol}"
-            tech_result = self.technical_analyst.process_message(tech_message, tech_context)
-            results["technical_analysis"] = tech_result
+            # Save updated config
+            with open(config_path, 'w') as f:
+                yaml.dump(config, f, default_flow_style=False, sort_keys=False)
             
-            # Qullamaggie analysis
-            qull_context = {"symbol": symbol}
-            qull_message = f"Please analyze {symbol} for momentum setups"
-            qull_result = self.qullamaggie_agent.process_message(qull_message, qull_context)
-            results["qullamaggie_analysis"] = qull_result
+            self.terminal.print_success(f"Added {symbol} to watchlist")
+            self.terminal.print_info(f"Current watchlist: {', '.join(watchlist)}")
+        else:
+            self.terminal.print_warning(f"{symbol} is already in watchlist")
+    
+    def _run_committee_with_output(self, symbol: str) -> Dict[str, Any]:
+        """Run investment committee with real-time terminal output"""
+        
+        # Set up real-time output callback
+        def output_callback(speaker: str, message: str, timestamp: datetime = None):
+            if timestamp is None:
+                timestamp = datetime.now()
             
-            return {
-                "type": "single_symbol_analysis",
-                "symbol": symbol,
-                "results": results,
-                "timestamp": datetime.now().isoformat()
-            }
+            # Format and display the message
+            self.terminal.print_conversation(speaker, message, timestamp)
             
-        except Exception as e:
-            self.logger.error(f"Error in single symbol analysis for {symbol}: {e}")
-            return {
-                "type": "error",
-                "message": str(e),
-                "symbol": symbol
-            }
+            # Log to conversation logger
+            self.conversation_logger.log_message(speaker, message, timestamp)
+        
+        # Run the orchestrator with callback
+        result = self.orchestrator.run_committee_session(
+            symbols=[symbol],
+            output_callback=output_callback
+        )
+        
+        return result
+    
+    def show_config(self):
+        """Display current configuration"""
+        self.terminal.print_header("WCK Investment Team Configuration")
+        
+        # System settings
+        print("\n📊 System Settings:")
+        agents = self.config.get('agents', {})
+        print(f"   Active Agents: {len(agents)}")
+        for agent_name in agents.keys():
+            print(f"     • {agent_name}")
+        
+        # Risk settings
+        risk = self.config.get('risk_management', {})
+        print(f"\n⚠️  Risk Management:")
+        print(f"   Max Position Size: {risk.get('position_sizing', {}).get('max_single_position', 0)*100:.1f}%")
+        print(f"   Min Risk/Reward: {risk.get('risk_metrics', {}).get('min_risk_reward_ratio', 0):.1f}:1")
+        print(f"   Default Stop Loss: {risk.get('stop_loss', {}).get('default_stop_pct', 0)*100:.1f}%")
+        
+        # Watchlist
+        watchlist = self.config.get('watchlist', {}).get('default_symbols', [])
+        print(f"\n📝 Watchlist ({len(watchlist)} symbols):")
+        print(f"   {', '.join(watchlist)}")
+        
+        # Technical indicators
+        indicators = self.config.get('technical_indicators', {})
+        total_indicators = sum(len(indicators.get(category, [])) for category in indicators.keys())
+        print(f"\n📈 Technical Analysis:")
+        print(f"   Total Indicators: {total_indicators}")
+        for category, indicator_list in indicators.items():
+            print(f"   {category.title()}: {len(indicator_list)} indicators")
+
+
+def create_parser():
+    """Create argument parser for CLI"""
+    parser = argparse.ArgumentParser(
+        description="WCK Investment Team - AI Hedge Fund System",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python main.py --analyze TSLA              # Analyze Tesla with full committee
+  python main.py --analyze-all               # Analyze entire watchlist
+  python main.py --add-stock AAPL            # Add Apple to watchlist
+  python main.py --config                    # Show current configuration
+  
+For more information, visit: https://github.com/williamknighting/wck_investment_team
+        """
+    )
+    
+    # Mutually exclusive group for main actions
+    action_group = parser.add_mutually_exclusive_group(required=True)
+    
+    action_group.add_argument(
+        '--analyze',
+        metavar='SYMBOL',
+        help='Analyze a single stock symbol with full investment committee'
+    )
+    
+    action_group.add_argument(
+        '--analyze-all',
+        action='store_true',
+        help='Analyze entire watchlist with investment committee'
+    )
+    
+    action_group.add_argument(
+        '--add-stock',
+        metavar='SYMBOL',
+        help='Add a stock symbol to the watchlist'
+    )
+    
+    action_group.add_argument(
+        '--config',
+        action='store_true',
+        help='Display current system configuration'
+    )
+    
+    # Optional arguments
+    parser.add_argument(
+        '--config-file',
+        default='config.yaml',
+        help='Path to configuration file (default: config.yaml)'
+    )
+    
+    parser.add_argument(
+        '--verbose',
+        action='store_true',
+        help='Enable verbose output'
+    )
+    
+    parser.add_argument(
+        '--version',
+        action='version',
+        version='WCK Investment Team v1.0.0'
+    )
+    
+    return parser
 
 
 def main():
-    """Main entry point for the AI hedge fund system"""
-    print("🏦 AI Hedge Fund System")
-    print("=" * 50)
-    
-    # Check for OpenAI API key
-    if not os.getenv("OPENAI_API_KEY"):
-        print("❌ Error: OPENAI_API_KEY environment variable not set")
-        print("Please set your OpenAI API key and try again.")
-        return
+    """Main entry point"""
+    parser = create_parser()
+    args = parser.parse_args()
     
     try:
-        # Initialize orchestrator
-        print("🚀 Initializing AI Hedge Fund System...")
-        orchestrator = AIHedgeFundOrchestrator()
+        # Initialize CLI system
+        cli = WCKInvestmentCLI(config_path=args.config_file)
         
-        # Get data summary
-        print("\n📊 Market Data Summary:")
-        data_summary = orchestrator.get_data_summary()
-        if "error" not in data_summary:
-            print(f"   Total records: {data_summary['total_records']:,}")
-            print(f"   Unique symbols: {data_summary['unique_symbols']}")
-            print(f"   Data sources: {', '.join(data_summary['data_sources'])}")
-        else:
-            print(f"   Error: {data_summary['error']}")
-        
-        # Example usage
-        test_symbol = "SPY"
-        
-        # Add to watchlist if not already there
-        print(f"\n📝 Adding {test_symbol} to watchlist...")
-        orchestrator.add_to_watchlist(test_symbol, "S&P 500 ETF for testing")
-        
-        # Run data monitoring workflow
-        print(f"\n🔍 Running Data Monitoring Workflow...")
-        data_workflow = orchestrator.run_full_data_workflow()
-        
-        if data_workflow.get("workflow_status") == "completed":
-            print("   ✅ Data monitoring workflow completed successfully")
-        else:
-            print(f"   ❌ Data workflow error: {data_workflow.get('error', 'Unknown error')}")
-        
-        # Run investment committee meeting
-        print(f"\n🏛️  Running Investment Committee Meeting for {test_symbol}...")
-        meeting_result = orchestrator.run_investment_committee_meeting(test_symbol)
-        
-        if meeting_result.get("type") == "investment_committee_meeting":
-            decision = meeting_result["decision"]
-            print(f"   Decision: {decision['decision']}")
-            print(f"   Confidence: {decision['confidence']:.1f}/5.0")
-            print(f"   Position Size: {decision.get('position_size', 0)} shares")
-            print(f"   Reasoning: {decision['reasoning']}")
+        # Route to appropriate action
+        if args.analyze:
+            cli.analyze_single_stock(args.analyze)
+        elif args.analyze_all:
+            cli.analyze_all_stocks()
+        elif args.add_stock:
+            cli.add_stock_to_watchlist(args.add_stock)
+        elif args.config:
+            cli.show_config()
             
-            if meeting_result.get("conversation_logged"):
-                print(f"   Meeting logged: {meeting_result['conversation_logged']}")
-            if meeting_result.get("decision_logged"):
-                print(f"   Decision logged: {meeting_result['decision_logged']}")
-        else:
-            print(f"   Error: {meeting_result.get('message', 'Unknown error')}")
-        
-        # Portfolio status
-        print(f"\n💼 Portfolio Status:")
-        portfolio = orchestrator.get_portfolio_status()
-        print(f"   Portfolio Size: ${portfolio['portfolio_size']:,}")
-        print(f"   Active Positions: {portfolio['active_positions']}")
-        print(f"   Cash Available: ${portfolio['cash_available']:,}")
-        
-        print(f"\n✅ AI Hedge Fund System demo completed successfully!")
-        
+    except KeyboardInterrupt:
+        print("\n\n👋 Goodbye!")
+        sys.exit(0)
     except Exception as e:
-        print(f"❌ Error running AI hedge fund system: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"\n❌ Error: {e}")
+        if args.verbose:
+            import traceback
+            traceback.print_exc()
+        sys.exit(1)
 
 
 if __name__ == "__main__":

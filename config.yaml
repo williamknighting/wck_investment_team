@@ -1,0 +1,250 @@
+agents:
+  director:
+    name: Investment Committee Director
+    personality: decisive, thorough, skeptical, authoritative
+    prompt: 'You are the Investment Committee Director for WCK Capital. Your role
+      is to:
+
+      - Orchestrate investment committee meetings with authority and control
+
+      - Ask pointed, challenging questions to stress-test proposals
+
+      - Resolve conflicts between team members decisively
+
+      - Make final trading decisions based on comprehensive analysis
+
+      - Maintain focus on risk-adjusted returns and capital preservation
+
+
+      Your personality: Decisive but thorough, skeptical of overconfident proposals,
+
+      direct in communication, and always focused on the fund''s fiduciary responsibility.
+
+      '
+  risk_manager:
+    name: Portfolio Risk Manager
+    personality: conservative, detail-oriented, cautious, analytical
+    prompt: 'You are the Risk Manager for WCK Capital. Your primary responsibility
+      is protecting capital. You:
+
+      - Evaluate every proposal for portfolio concentration risk
+
+      - Challenge aggressive position sizing and inadequate risk controls
+
+      - Can veto trades that exceed risk parameters
+
+      - Suggest position adjustments to maintain portfolio balance
+
+      - Always err on the side of caution and capital preservation
+
+
+      Your personality: Conservative by nature, detail-oriented in risk assessment,
+
+      skeptical of high-conviction trades, and focused on downside protection.
+
+      '
+  qullamaggie_agent:
+    name: Qullamaggie Strategy Agent
+    personality: momentum-focused, pattern-driven, aggressive, confident
+    prompt: 'You are the Qullamaggie Strategy Agent, specializing in momentum-based
+      trading. You:
+
+      - Identify episodic pivot setups and momentum continuation patterns
+
+      - Focus on stocks showing 20%+ gains over 22 trading days
+
+      - Look for stocks within 25% of 52-week highs with strong volume
+
+      - Use conviction-based position sizing (higher conviction = larger size)
+
+      - Defend your momentum thesis with technical evidence
+
+
+      Your personality: Confident in momentum patterns, aggressive when conviction
+      is high,
+
+      quick to act on setups, and focused on capturing explosive moves.
+
+      '
+  technical_analyst:
+    name: Technical Analysis Specialist
+    personality: analytical, data-driven, objective, precise
+    prompt: 'You are the Technical Analyst providing quantitative market analysis.
+      You:
+
+      - Calculate and interpret technical indicators for all requested symbols
+
+      - Provide objective technical metrics without bias
+
+      - Highlight key support/resistance levels and trend analysis
+
+      - Report data freshness and any limitations in your analysis
+
+      - Present clear, concise technical summaries
+
+
+      Your personality: Analytical and objective, focused on data accuracy,
+
+      precise in communications, and neutral in market bias.
+
+      '
+risk_management:
+  position_sizing:
+    max_single_position: 0.05
+    max_portfolio_risk: 0.02
+    min_position_size: 0.001
+  risk_metrics:
+    min_risk_reward_ratio: 2.0
+    max_correlation_limit: 0.7
+    max_sector_concentration: 0.2
+  stop_loss:
+    default_stop_pct: 0.08
+    max_stop_loss: 0.15
+    min_stop_loss: 0.03
+  portfolio_limits:
+    max_active_positions: 10
+    cash_reserve_min: 0.1
+    leverage_limit: 1.0
+technical_indicators:
+  momentum:
+  - RSI_14
+  - RSI_2
+  - MACD
+  - ADX_14
+  - ROC_22
+  - STOCH_14_3
+  trend:
+  - EMA_8
+  - EMA_20
+  - EMA_50
+  - SMA_200
+  - PSAR
+  volatility:
+  - BBANDS_20
+  - ATR_14
+  - NATR_14
+  - KELTNER_20
+  volume:
+  - VOLUME_SMA_20
+  - OBV
+  - CMF_20
+  - VWAP
+  support_resistance:
+  - PIVOT_POINTS
+  - FIB_RETRACEMENT
+  - HIGH_52W
+  - LOW_52W
+autogen:
+  model_settings:
+    model: gpt-4
+    temperature: 0.1
+    max_tokens: 2000
+    timeout: 30
+  conversation:
+    max_rounds: 10
+    early_termination: 8
+    turn_timeout: 30
+    allow_interruptions: true
+  retry_settings:
+    max_retries: 3
+    retry_delay: 1.0
+    exponential_backoff: true
+conversation:
+  settings:
+    real_time_output: true
+    timestamp_format: '%H:%M:%S'
+    agent_name_width: 20
+  debate_topics:
+  - position_sizing
+  - risk_management
+  - market_timing
+  - technical_analysis
+  - strategy_conflicts
+  logging:
+    conversation_detail: full
+    save_to_markdown: true
+    include_timestamps: true
+    include_participant_list: true
+    include_decision_summary: true
+database:
+  market_data:
+    path: data_store/market_data.duckdb
+    connection_timeout: 30
+    query_timeout: 10
+  data_freshness:
+    max_age_hours: 4
+    warning_age_hours: 2
+  backup:
+    enabled: true
+    frequency: daily
+    retention_days: 30
+watchlist:
+  default_symbols:
+  - SPY
+  - QQQ
+  - TSLA
+  - AAPL
+  - NVDA
+  - MSFT
+  - GOOGL
+  - AMZN
+  - META
+  analysis_settings:
+    batch_size: 5
+    parallel_processing: true
+  auto_update:
+    enabled: true
+    frequency: 1h
+    market_hours_only: true
+file_system:
+  directories:
+    conversations: conversations
+    decisions: decisions
+    proposals: proposals
+    analysis: analysis
+    logs: logs
+  file_naming:
+    timestamp_format: '%Y-%m-%d-%H-%M-%S'
+    include_symbol: true
+    include_strategy: true
+  cleanup:
+    auto_cleanup: true
+    retention_days: 90
+    compress_old_files: true
+error_handling:
+  graceful_degradation: true
+  continue_on_agent_failure: false
+  critical_agents:
+  - director
+  logging:
+    level: INFO
+    file: logs/system.log
+    max_size_mb: 100
+    backup_count: 5
+  alerts:
+    enable_email: false
+    enable_slack: false
+    critical_errors_only: true
+development:
+  debug_mode: false
+  verbose_logging: false
+  test_mode: false
+  mock_data:
+    enabled: false
+    use_sample_prices: false
+  api_limits:
+    rate_limit: 60
+    daily_limit: 1000
+    respect_limits: true
+performance:
+  caching:
+    enabled: true
+    ttl_minutes: 15
+    max_cache_size: 1000
+  parallel_processing:
+    max_workers: 4
+    enable_for_analysis: true
+    enable_for_proposals: true
+  memory:
+    max_conversation_history: 100
+    cleanup_frequency: 1h

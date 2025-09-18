@@ -48,53 +48,118 @@ cp .env.example .env
 # Edit .env with your API keys (OPENAI_API_KEY required)
 ```
 
-### 2. Run Investment Committee Meeting
+### 2. Command Line Interface
 
-**Main Command - Run Full Committee Session:**
+**WCK Investment Team provides a comprehensive CLI for all operations:**
+
+```bash
+# Analyze a single stock with full investment committee
+python main.py --analyze TSLA
+
+# Analyze entire watchlist
+python main.py --analyze-all
+
+# Add a stock to the watchlist
+python main.py --add-stock AAPL
+
+# View current configuration
+python main.py --config
+
+# Get help
+python main.py --help
+```
+
+**Real-Time Terminal Output:**
+Watch the investment committee conversation unfold in real-time:
+```
+[14:30:15] DIRECTOR           : Good afternoon team. We're reviewing proposals for TSLA.
+[14:30:18] TECHNICAL_ANALYST  : Current TSLA metrics: RSI: 67.5, Volume: 15% above average
+[14:30:22] QULLAMAGGIE_AGENT  : I'm seeing an episodic pivot setup here! Textbook momentum...
+[14:30:25] RISK_MANAGER       : Let's discuss the risk/reward. Position size seems aggressive...
+```
+
+**Alternative - Direct Orchestrator:**
 ```bash
 python investment_committee_orchestrator.py
 ```
 
-This single command runs the complete investment committee workflow:
-- Initializes all agents
-- Runs market research and technical analysis  
-- Generates strategy proposals in parallel
-- Conducts structured committee debate
-- Makes final trading decisions
-- Generates comprehensive reports
-
 ### 3. Review Results
 
 After running, check these folders for outputs:
+- **`conversations/`**: Complete committee meeting transcripts (markdown format)
 - **`decisions/`**: Final trading decisions and rationale
-- **`conversations/`**: Complete committee meeting transcripts  
 - **`proposals/`**: Individual strategy agent proposals
+
+**Sample Output Files:**
+```
+conversations/2024-01-15-14-30-00-TSLA.md    # Full meeting transcript
+decisions/decision-report-2024-01-15-TSLA.md  # Decision summary
+proposals/qullamaggie-TSLA-proposal.md        # Strategy proposals
+```
 
 ## 📁 Directory Structure
 
 ```
 wck_investment_team/
-├── investment_committee_orchestrator.py  # 🎯 MAIN SCRIPT
-├── agents/                               # AI Agent implementations
-│   ├── director.py                       # Investment committee director
-│   ├── risk_manager.py                   # Portfolio risk management
-│   ├── qullamaggie_agent.py             # Momentum strategy agent
-│   ├── technical_analyst.py             # Technical analysis specialist
-│   └── base_*.py                        # Base classes and utilities
-├── config/                              # Configuration files
-│   └── committee_config.json            # Agent behavior settings
-├── decisions/                           # Final trading decisions (output)
-├── conversations/                       # Meeting transcripts (output)  
-├── proposals/                           # Strategy proposals (output)
-├── src/                                # Core system components
-├── scripts/                            # Utility scripts
-├── tests/                              # Test files (development)
-└── data_store/                         # Market data storage
+├── main.py                              # 🎯 CLI ENTRY POINT
+├── config.yaml                          # 📋 Main configuration file  
+├── investment_committee_orchestrator.py # Core orchestrator
+├── requirements.txt                     # Python dependencies
+├── agents/                              # AI Agent implementations
+│   ├── director.py                      # Investment committee director
+│   ├── risk_manager.py                  # Portfolio risk management
+│   ├── qullamaggie_agent.py            # Momentum strategy agent
+│   ├── technical_analyst.py            # Technical analysis specialist
+│   └── base_*.py                       # Base classes and utilities
+├── src/utils/                          # System utilities
+│   ├── terminal_output.py              # Real-time terminal display
+│   ├── conversation_logger.py          # Markdown conversation logging
+│   └── logging_config.py               # Logging configuration
+├── conversations/                      # Meeting transcripts (output)
+├── decisions/                         # Final trading decisions (output)
+├── proposals/                         # Strategy proposals (output)
+├── src/                              # Core system components
+├── tests/                            # Test files (development)
+└── data_store/                       # Market data storage
 ```
 
 ## ⚙️ Configuration
 
-### Committee Settings (`config/committee_config.json`)
+### Main Configuration (`config.yaml`)
+
+The system uses a comprehensive YAML configuration file:
+
+```yaml
+# Agent personalities and prompts
+agents:
+  director:
+    name: "Investment Committee Director"
+    personality: "decisive, thorough, skeptical"
+    prompt: "You are the Investment Committee Director..."
+  
+  risk_manager:
+    personality: "conservative, detail-oriented"
+    # ... full prompts and settings
+
+# Risk management parameters
+risk_management:
+  position_sizing:
+    max_single_position: 0.05  # 5% max per position
+    min_risk_reward_ratio: 2.0  # 2:1 minimum
+  
+# Technical indicators
+technical_indicators:
+  momentum: [RSI_14, MACD, ADX_14]
+  trend: [EMA_8, EMA_20, SMA_200]
+  # ... complete indicator list
+
+# Watchlist management  
+watchlist:
+  default_symbols: [SPY, QQQ, TSLA, AAPL, NVDA]
+  auto_update: true
+```
+
+### Legacy Configuration (`config/committee_config.json`)
 
 ```json
 {

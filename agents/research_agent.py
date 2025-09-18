@@ -9,7 +9,7 @@ import numpy as np
 from pathlib import Path
 import json
 
-from base_agent import BaseHedgeFundAgent
+from agents.base_agent import BaseHedgeFundAgent
 
 # Import data providers
 import sys
